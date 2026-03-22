@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
-import { ShieldAlert, CheckCircle2, FileText } from "lucide-react";
+import { ShieldAlert, CheckCircle2 } from "lucide-react";
 import { usePatientAssessment } from "@/context/PatientAssessmentContext";
 import { drugLabels } from "@/doac/calc";
 
@@ -25,17 +25,7 @@ export default function ReversalPage() {
         <div className="mt-2 inline-flex rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-700 shadow-sm">
           ยาที่เลือก: {drugLabels[drug]}
         </div>
-        <div className="mt-4">
-          <a
-            href="/DOAC_thai.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex max-w-full items-center gap-2 rounded-xl border border-amber-300/80 bg-amber-50/90 px-4 py-2.5 text-sm font-medium text-amber-950 shadow-sm transition hover:border-amber-400 hover:bg-amber-50"
-          >
-            <FileText className="h-4 w-4 shrink-0" aria-hidden />
-            <span>เปิดเอกสาร PCC / reversal (ไทย) — DOAC_thai.pdf</span>
-          </a>
-        </div>
+        <p className="mt-3 text-xs text-slate-500">เอกสารอ้างอิง PDF (ไทย): เปิดจากเมนู «เอกสาร PCC (ไทย)» ด้านบน</p>
       </div>
 
       <div className="space-y-6">

@@ -1,5 +1,6 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router-dom";
+import { FileText } from "lucide-react";
 import { clsx } from "clsx";
 
 const navClass = ({ isActive }: { isActive: boolean }) =>
@@ -36,6 +37,15 @@ export function Layout() {
             <NavLink to="/reversal" className={navClassAmber}>
               Reversal
             </NavLink>
+            <a
+              href="/DOAC_thai.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-full border border-violet-200 bg-violet-50/90 px-4 py-2 text-sm font-medium text-violet-950 shadow-sm transition hover:border-violet-400 hover:bg-violet-100"
+            >
+              <FileText className="h-4 w-4 shrink-0" aria-hidden />
+              เอกสาร PCC (ไทย)
+            </a>
           </nav>
         </header>
 
