@@ -887,13 +887,13 @@ select:focus, input:focus { border-color: var(--accent); }
     </div>
   </div>
 
-  <div class="card">
+  <div class="card" id="bleed-card-3" hidden>
     <div class="card-title">
       <div class="icon" style="background:var(--warn-bg);color:var(--warn)">3</div>
-      ข้อมูลยา
+      ข้อมูลยา <span class="text-xs text-muted" style="font-weight:400">(เฉพาะยาที่เลือกในข้อ 1)</span>
     </div>
-    <div class="form-group">
-      <label class="form-label">Last dose ของ DOAC (ชม. ก่อนมา)</label>
+    <div class="form-group" id="bleed-wrap-lastdose">
+      <label class="form-label" id="bleed-lastdose-label">Last dose ของ DOAC (ชม. ก่อนมา)</label>
       <select id="bleed-lastdose">
         <option value="">-- เลือก --</option>
         <option value="lt2">&lt; 2 ชม.</option>
@@ -903,16 +903,10 @@ select:focus, input:focus { border-color: var(--accent); }
         <option value="unknown">ไม่ทราบ</option>
       </select>
     </div>
-    <div class="form-group">
-      <label class="form-label">Dose ของยา (สำหรับ Xa inhibitors)</label>
+    <div class="form-group" id="bleed-wrap-dose" hidden>
+      <label class="form-label" id="bleed-dose-label">Dose</label>
       <select id="bleed-dose">
         <option value="">-- เลือก --</option>
-        <option value="rivaroxaban-low">Rivaroxaban ≤10 mg</option>
-        <option value="rivaroxaban-high">Rivaroxaban >10 mg</option>
-        <option value="apixaban-low">Apixaban ≤5 mg</option>
-        <option value="apixaban-high">Apixaban >5 mg</option>
-        <option value="unknown">ไม่ทราบ dose</option>
-        <option value="na">N/A (Dabigatran / Edoxaban)</option>
       </select>
     </div>
   </div>
@@ -1453,8 +1447,58 @@ function isMajorBleed() {
   return document.querySelectorAll('.bleed-criteria:checked').length > 0;
 }
 
+/** แสดงการ์ดข้อ 3 และกรองคำถามตามยาที่เลือก (Dabigatran/Edoxaban = เฉพาะเวลา dose; Apixaban/Rivaroxaban = เวลา + dose ของยานั้น) */
+function syncBleedDrugInfoUI() {
+  const card3 = document.getElementById('bleed-card-3');
+  const wrapDose = document.getElementById('bleed-wrap-dose');
+  const selDose = document.getElementById('bleed-dose');
+  const labelDose = document.getElementById('bleed-dose-label');
+  const labelLast = document.getElementById('bleed-lastdose-label');
+  const drug = getSelected('bleed-drug');
+
+  if (!drug) {
+    card3.setAttribute('hidden', '');
+    return;
+  }
+  card3.removeAttribute('hidden');
+
+  const names = { dabigatran: 'Dabigatran', apixaban: 'Apixaban', rivaroxaban: 'Rivaroxaban', edoxaban: 'Edoxaban' };
+  labelLast.textContent = 'Last dose ของ ' + (names[drug] || 'DOAC') + ' (ชม. ก่อนมา)';
+
+  if (drug === 'dabigatran' || drug === 'edoxaban') {
+    wrapDose.setAttribute('hidden', '');
+    selDose.innerHTML = '<option value="">--</option>';
+    selDose.value = '';
+  } else {
+    wrapDose.removeAttribute('hidden');
+    const prev = selDose.value;
+    selDose.innerHTML = '';
+    function addOpt(val, text) {
+      const o = document.createElement('option');
+      o.value = val;
+      o.textContent = text;
+      selDose.appendChild(o);
+    }
+    addOpt('', '-- เลือก --');
+    if (drug === 'apixaban') {
+      labelDose.textContent = 'Dose Apixaban';
+      addOpt('apixaban-low', '≤5 mg (low dose)');
+      addOpt('apixaban-high', '>5 mg (high dose)');
+      addOpt('unknown', 'ไม่ทราบ dose');
+    } else if (drug === 'rivaroxaban') {
+      labelDose.textContent = 'Dose Rivaroxaban';
+      addOpt('rivaroxaban-low', '≤10 mg (low dose)');
+      addOpt('rivaroxaban-high', '>10 mg (high dose)');
+      addOpt('unknown', 'ไม่ทราบ dose');
+    }
+    if (prev && [...selDose.options].some(function (o) { return o.value === prev; })) selDose.value = prev;
+    else selDose.value = '';
+  }
+}
+
 // ==================== BLEEDING LOGIC ====================
 function updateBleeding() {
+  syncBleedDrugInfoUI();
   const drug = getSelected('bleed-drug');
   const site = getSelected('bleed-site');
   const response = getSelected('bleed-response');
@@ -1579,8 +1623,12 @@ function resetBleeding() {
   document.querySelectorAll('#tab-bleeding .option-btn').forEach(b => b.classList.remove('selected','selected-danger'));
   document.querySelectorAll('.bleed-criteria').forEach(cb => cb.checked = false);
   document.getElementById('bleed-lastdose').value = '';
+  document.getElementById('bleed-dose').innerHTML = '<option value="">-- เลือก --</option>';
   document.getElementById('bleed-dose').value = '';
   document.getElementById('bleed-result').innerHTML = '';
+  document.getElementById('bleed-card-3').setAttribute('hidden', '');
+  document.getElementById('bleed-wrap-dose').setAttribute('hidden', '');
+  document.getElementById('bleed-lastdose-label').textContent = 'Last dose ของ DOAC (ชม. ก่อนมา)';
 }
 
 // ==================== PREOP LOGIC ====================
