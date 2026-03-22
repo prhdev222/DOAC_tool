@@ -20,8 +20,8 @@ const navClassAmber = ({ isActive }: { isActive: boolean }) =>
 
 export function Layout() {
   return (
-    <div className="min-h-screen bg-slate-50 p-4 sm:p-6">
-      <div className="mx-auto max-w-7xl space-y-8">
+    <div className="flex min-h-screen flex-col bg-slate-50 p-4 sm:p-6">
+      <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col space-y-8">
         <header className="border-b border-slate-200 pb-6">
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
             โปรแกรมช่วยตัดสินใจ DOAC : preop, reversal
@@ -39,7 +39,19 @@ export function Layout() {
           </nav>
         </header>
 
-        <Outlet />
+        <main className="flex-1">
+          <Outlet />
+        </main>
+
+        <footer className="mt-auto border-t border-slate-200 pt-6 text-center text-sm text-slate-500">
+          © 2026 directed by{" "}
+          <a
+            href="mailto:Uradev222@gmail.com"
+            className="font-medium text-slate-700 underline decoration-slate-300 underline-offset-2 transition hover:text-teal-700 hover:decoration-teal-400"
+          >
+            Uradev
+          </a>
+        </footer>
       </div>
     </div>
   );
